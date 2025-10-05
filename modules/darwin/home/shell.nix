@@ -104,9 +104,11 @@ in {
         fi
       fi
 
-      if test -f ~/.config/shell-secrets.fish
+      if test -f ~/.config/shell-secrets.fish; then
         source ~/.config/shell-secrets.fish
-      end
+      fi
+
+      eval "$(~/.local/bin/mise activate zsh)"
     '';
   };
 
@@ -154,6 +156,8 @@ in {
       if test -f ~/.config/shell-secrets.fish
         source ~/.config/shell-secrets.fish
       end
+
+      ~/.local/bin/mise activate fish | source
     '';
 
     # Functions
