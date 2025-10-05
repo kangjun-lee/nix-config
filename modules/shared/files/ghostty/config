@@ -1,4 +1,4 @@
-theme = catppuccin-mocha
+theme = Catppuccin Mocha
 
 background-opacity = 0.7
 background-blur-radius = 50
@@ -10,6 +10,9 @@ window-padding-x = 10
 window-padding-y = 10,0
 
 # font
+font-family = Cascadia Code NF Regular
+font-family = JetBrainsMono NFM Regular
+font-family = SF Mono Regular
 macos-option-as-alt = true
 mouse-hide-while-typing = true
 font-size = 16
