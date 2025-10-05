@@ -76,6 +76,7 @@ in {
       yabai -m rule --add app="ChatGPT" manage=off mouse_follows_focus=off
       yabai -m rule --add app="qmk-display" manage=off
       yabai -m rule --add app="Session" manage=off
+      yabai -m rule --add app="Rona" manage=off
 
       # mark window as scratchpad using rule and set size (scratchpad windows are manage=off automatically)
       yabai -m rule --add app="^카카오톡$" scratchpad=kakaotalk
