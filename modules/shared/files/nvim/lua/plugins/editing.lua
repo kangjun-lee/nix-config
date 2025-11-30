@@ -44,6 +44,7 @@ return {
       require("lsp-file-operations").setup()
     end,
   },
+  -- Go to definition in popup
   {
     "WilliamHsieh/overlook.nvim",
     opts = {},
@@ -60,5 +61,23 @@ return {
       { "<leader>pt", function() require("overlook.api").open_in_tab() end, desc = "Open popup in tab" },
       { "<leader>po", function() require("overlook.api").open_in_original_window() end, desc = "Open popup in current window" },
     },
+  },
+
+  {
+    "eero-lehtinen/oklch-color-picker.nvim",
+    event = "VeryLazy",
+    version = "*",
+    keys = {
+      -- One handed keymap recommended, you will be using the mouse
+      {
+        "<leader>v",
+        function()
+          require("oklch-color-picker").pick_under_cursor()
+        end,
+        desc = "Color pick under cursor",
+      },
+    },
+    ---@type oklch.Opts
+    opts = {},
   },
 }

@@ -4,7 +4,7 @@ return {
     opts = function(_, opts)
       local actions = require("fzf-lua").actions
 
-      -- 🔁 키매핑 수정: alt-h 제거 + ctrl-h 추가
+      -- 🔁 update keymapping: remove alt-h, add ctrl-h
       opts.files = opts.files or {}
       opts.files.actions = opts.files.actions or {}
       opts.files.actions["alt-h"] = nil
@@ -19,15 +19,16 @@ return {
         "node_modules",
         "go/pkg",
         "dist",
-        ".next",
-        ".git",
-        ".gitlab",
+        "\\.next",
+        "\\.git/",
+        "\\.gitlab",
         "build",
         "target",
         "package-lock.json",
         "pnpm-lock.yaml",
         "yarn.lock",
         ".DS_Store",
+        "storybook-static",
       }
     end,
   },

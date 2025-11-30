@@ -9,7 +9,7 @@ return {
     },
     lazy = false,
     keys = {
-      { "<leader>v", "<cmd>VenvSelect<cr>" },
+      { "<leader>cV", "<cmd>VenvSelect<cr>" },
     },
     ---@type venv-selector.Config
     opts = {

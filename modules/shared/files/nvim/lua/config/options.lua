@@ -18,7 +18,7 @@ opt.splitright = true
 opt.splitkeep = "cursor"
 opt.mouse = ""
 
--- vim.g.lazyvim_picker = "snacks"
+vim.g.lazyvim_picker = "fzf"
 
 opt.formatoptions:append({ "r" })
 
@@ -53,3 +53,21 @@ vim.keymap.set("n", "<leader>C", function()
 end, { desc = "Copy absolute file path", noremap = true })
 
 vim.keymap.set("v", "<leader>C", copy_with_lines, { desc = "Copy relative path with line range", noremap = true })
+
+vim.g.lazyvim_prettier_needs_config = true
+vim.g.lazyvim_eslint_auto_format = true
+
+vim.g.lazyvim_rust_diagnostics = "bacon-ls"
+
+vim.keymap.set("n", "<leader>Tn", "<cmd>TodoTxt new<cr>", { desc = "New todo entry" })
+vim.keymap.set("n", "<leader>Tt", "<cmd>TodoTxt<cr>", { desc = "Toggle todo.txt" })
+vim.keymap.set("n", "<leader>Td", "<cmd>DoneTxt<cr>", { desc = "Toggle done.txt" })
+vim.keymap.set("n", "<leader>Tg", "<cmd>TodoTxt ghost<cr>", { desc = "Toggle ghost text" })
+vim.keymap.set("n", "<cr>", "<Plug>(TodoTxtToggleState)", { desc = "Toggle task state" })
+vim.keymap.set("n", "<c-c>n", "<Plug>(TodoTxtCyclePriority)", { desc = "Cycle priority" })
+vim.keymap.set("n", "<leader>Tm", "<Plug>(TodoTxtMoveDone)", { desc = "Move done tasks" })
+vim.keymap.set("n", "<leader>Tss", "<Plug>(TodoTxtSortTasks)", { desc = "Sort tasks (default)" })
+vim.keymap.set("n", "<leader>Tsp", "<Plug>(TodoTxtSortByPriority)", { desc = "Sort by priority" })
+vim.keymap.set("n", "<leader>Tsc", "<Plug>(TodoTxtSortByContext)", { desc = "Sort by context" })
+vim.keymap.set("n", "<leader>TsP", "<Plug>(TodoTxtSortByProject)", { desc = "Sort by project" })
+vim.keymap.set("n", "<leader>Tsd", "<Plug>(TodoTxtSortByDueDate)", { desc = "Sort by due date" })

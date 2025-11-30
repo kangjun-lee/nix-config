@@ -5,7 +5,6 @@ background-blur-radius = 50
 
 # macOS specific features
 macos-titlebar-style = hidden
-window-decoration = false 
 window-padding-x = 10
 window-padding-y = 10,0
 
@@ -24,3 +23,5 @@ keybind="cmd+alt+up=csi:1;7A"
 keybind="cmd+alt+down=csi:1;7B"
 keybind="cmd+alt+right=csi:1;7C"
 keybind="cmd+alt+left=csi:1;7D"
+
+unfocused-split-opacity=1

@@ -19,10 +19,19 @@ return {
       -- The below is to ensure eslint and eslint prettier plugin don't collide
       -- https://www.lazyvim.org/configuration/recipes#add-eslint-and-use-it-for-formatting
       servers = {
+        tailwindcss = {
+          filetypes = {
+            "templ",
+            "vue",
+            "html",
+            "astro",
+            "javascript",
+            "typescript",
+            "react",
+            "htmlangular",
+          },
+        },
         eslint = {
-          -- Simplify root_patterns as it changes root_dir in monorepos with default config
-          root_dir = require("lspconfig").util.root_pattern(".git"),
-          -- @antfu/eslint-config customizations
           filetypes = {
             "javascript",
             "javascriptreact",
@@ -49,7 +58,7 @@ return {
             "postcss",
           },
           settings = {
-            -- Silent the stylistic rules in you IDE, but still auto fix them
+            -- Silent the stylistic rules in your IDE, but still auto fix them
             rulesCustomizations = {
               { rule = "style/*", severity = "off", fixable = true },
               { rule = "format/*", severity = "off", fixable = true },
@@ -64,37 +73,9 @@ return {
             },
           },
         },
-        tailwindcss = {
-          -- Simplify root_patterns as it changes root_dir in monorepos with default config
-          root_dir = require("lspconfig").util.root_pattern(
-            "tailwind.config.js",
-            "tailwind.config.cjs",
-            "tailwind.config.mjs",
-            "tailwind.config.ts",
-            -- Or, just fallback to `.git`
-            ".git"
-          ),
-        },
         tsserver = {
           root_dir = require("lspconfig").util.root_pattern(".git"),
         },
-      },
-      -- The below may no longer be needed now that LazyVim has been updated to v10
-      setup = {
-        eslint = function()
-          require("lazyvim.util").lsp.on_attach(function(client, bufnr)
-            if client.name == "eslint" then
-              client.server_capabilities.documentFormattingProvider = true
-              -- Format on save with EslintFixAll
-              vim.api.nvim_create_autocmd("BufWritePre", {
-                buffer = bufnr,
-                command = "EslintFixAll",
-              })
-            elseif client.name == "tsserver" then
-              client.server_capabilities.documentFormattingProvider = false
-            end
-          end)
-        end,
       },
     },
   },
