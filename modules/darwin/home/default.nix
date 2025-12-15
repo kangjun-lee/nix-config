@@ -27,6 +27,7 @@ in {
     ../../shared/home/nvim.nix
     ../../shared/home/tmux.nix
     ../../shared/home/ghostty.nix
+    ../../shared/home/weechat.nix
     ../../shared/home/yazi.nix
   ];
 
@@ -65,6 +66,12 @@ in {
     graphite-cli
 
     eza
+
+    # Network related TUI
+    termshark
+    trippy
+    bandwhich
+    # netscanner  # aarch64-darwin not supported
   ];
 
   programs.home-manager.enable = true;

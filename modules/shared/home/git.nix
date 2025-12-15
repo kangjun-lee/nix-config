@@ -1,4 +1,8 @@
-{...}: {
+{pkgs, ...}: {
+  home.packages = with pkgs; [
+    git-worktree-runner
+  ];
+
   programs.lazygit = {
     enable = true;
     

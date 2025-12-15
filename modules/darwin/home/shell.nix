@@ -204,6 +204,18 @@ in {
         '';
       };
     };
+
+    shellAbbrs = {
+      gg = "git gtr";
+      gge = "git gtr editor";
+      gga = "git gtr ai";
+      ggn = "git gtr new --from-current";
+      ggr = "git gtr run";
+    };
+  };
+
+  home.file.".config/fish/completions/gtr.fish" = {
+    source = "${pkgs.git-worktree-runner}/completions/gtr.fish";
   };
 
   programs.carapace.enable = true;

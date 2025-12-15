@@ -55,7 +55,7 @@ end, { desc = "Copy absolute file path", noremap = true })
 vim.keymap.set("v", "<leader>C", copy_with_lines, { desc = "Copy relative path with line range", noremap = true })
 
 vim.g.lazyvim_prettier_needs_config = true
-vim.g.lazyvim_eslint_auto_format = true
+-- vim.g.lazyvim_eslint_auto_format = true
 
 vim.g.lazyvim_rust_diagnostics = "bacon-ls"
 
