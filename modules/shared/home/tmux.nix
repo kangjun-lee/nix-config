@@ -7,6 +7,7 @@
   home.packages = [
     pkgs.yq-go
     pkgs.gitmux
+    pkgs.tmux-file-picker
   ];
 
   programs.tmux = {
