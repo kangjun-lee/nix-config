@@ -2,6 +2,24 @@ local colors = require("colors")
 local icons = require("icons")
 local settings = require("settings")
 
+-- Device type detection function
+local function get_device_type(device_name)
+  local name = device_name:lower()
+  if name:find("airpods") then return "airpods" end
+  if name:find("headphone") or name:find("headset") then return "headphones" end
+  if name:find("macbook") and name:find("speaker") then return "builtin" end
+  if name:find("internal") then return "builtin" end
+  if name:find("dell") or name:find("lg ") or name:find("samsung")
+     or name:find("asus") or name:find("benq") or name:find("hdmi")
+     or name:find("displayport") then return "display" end
+  if name:match("^%w+%d+%w*$") and #name <= 12 then return "display" end
+  if name:find("homepod") then return "homepod" end
+  if name:find("bluetooth") or name:find("bt ") then return "bluetooth" end
+  if name:find("driver") or name:find("stream") or name:find("virtual")
+     or name:find("loopback") or name:find("soundflower") then return "virtual" end
+  return "speaker"
+end
+
 local popup_width = 250
 
 local volume_percent = sbar.add("item", "widgets.volume1", {
@@ -37,7 +55,22 @@ local volume_icon = sbar.add("item", "widgets.volume2", {
   },
 })
 
+local device_icon = sbar.add("item", "widgets.volume3", {
+  position = "right",
+  padding_right = 0,
+  icon = {
+    string = icons.audio_device.speaker,
+    color = colors.grey,
+    font = {
+      style = settings.font.style_map["Regular"],
+      size = 14.0,
+    },
+  },
+  label = { drawing = false },
+})
+
 local volume_bracket = sbar.add("bracket", "widgets.volume.bracket", {
+  device_icon.name,
   volume_icon.name,
   volume_percent.name
 }, {
@@ -149,4 +182,22 @@ volume_icon:subscribe("mouse.scrolled", volume_scroll)
 volume_percent:subscribe("mouse.clicked", volume_toggle_details)
 volume_percent:subscribe("mouse.exited.global", volume_collapse_details)
 volume_percent:subscribe("mouse.scrolled", volume_scroll)
+
+-- Start audio device event provider
+sbar.exec("killall audio_device >/dev/null; $CONFIG_DIR/helpers/event_providers/audio_device/bin/audio_device audio_device_change 1.0 &")
+
+-- Subscribe to custom audio device change event
+device_icon:subscribe("audio_device_change", function(env)
+  local device_name = env.device or ""
+  if device_name == "" then return end
+
+  current_audio_device = device_name
+
+  local device_type = get_device_type(device_name)
+  local icon = icons.audio_device[device_type] or icons.audio_device.speaker
+  device_icon:set({ icon = { string = icon } })
+end)
+
+device_icon:subscribe("mouse.clicked", volume_toggle_details)
+device_icon:subscribe("mouse.scrolled", volume_scroll)
 

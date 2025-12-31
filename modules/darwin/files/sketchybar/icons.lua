@@ -41,6 +41,16 @@ local icons = {
       forward = "􀊌",
       play_pause = "􀊈",
     },
+    audio_device = {
+      speaker = "􀝎",
+      headphones = "􀑈",
+      airpods = "􀲎",
+      display = "􀢹",
+      bluetooth = "􀑵",
+      homepod = "􀟥",
+      builtin = "􀙗",
+      virtual = "􀆭",
+    },
   },
 
   -- Alternative NerdFont icons
@@ -82,6 +92,16 @@ local icons = {
       back = "",
       forward = "",
       play_pause = "",
+    },
+    audio_device = {
+      speaker = "󰓃",
+      headphones = "󰋋",
+      airpods = "󰋋",
+      display = "󰍹",
+      bluetooth = "󰂯",
+      homepod = "󰋎",
+      builtin = "󰌢",
+      virtual = "󰎆",
     },
   },
 }
