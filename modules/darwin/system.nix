@@ -6,7 +6,7 @@
 }: let
   inherit (userConfig) home;
 in {
-  system.primaryUser = "gangjun";
+  system.primaryUser = userConfig.username;
   system.defaults = {
     CustomUserPreferences = {
       "com.apple.WindowManager" = {
@@ -72,9 +72,8 @@ in {
       ];
 
       persistent-others = [
-        "${home}/Documents/"
-        "${home}/Pictures/screenshots/"
-        "${home}/Downloads/"
+        {folder = {path = "${home}/Pictures/screenshots/"; displayas = "stack"; showas = "fan"; arrangement = "date-created";};}
+        {folder = {path = "${home}/Downloads/"; displayas = "stack"; showas = "fan"; arrangement = "date-created";};}
       ];
 
       # Hot corner bottom right -> show desktop(2) / others -> disabled(1)

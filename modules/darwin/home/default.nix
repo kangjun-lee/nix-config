@@ -44,6 +44,18 @@ in {
     # Cli Utils
     wget
     curl
+    bat # cat 대체, 구문 강조
+    fd # find 대체
+    fzf # fuzzy finder
+    ripgrep # grep 대체
+    gh # GitHub CLI
+    jq # JSON 처리
+    tree # 디렉토리 트리
+    zoxide # cd 대체
+    tldr # man 대체
+    bottom # 시스템 모니터
+    tokei # 코드 통계
+    aria2 # 다운로더
 
     fortune
 
