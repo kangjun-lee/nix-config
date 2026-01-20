@@ -24,35 +24,53 @@ opt.formatoptions:append({ "r" })
 
 vim.g.lazyvim_prettier_needs_config = false
 
--- Custom commands
-local function copy_with_lines()
-  if vim.fn.mode():match("[vV�]") then
-    vim.cmd("normal! gv")
+local function get_project_relative_path()
+  local root = LazyVim.root()
+  local filepath = vim.fn.expand("%:p")
+  if root and filepath:sub(1, #root) == root then
+    return filepath:sub(#root + 2)
   end
-
-  local srow = vim.api.nvim_buf_get_mark(0, "<")[1]
-  local erow = vim.api.nvim_buf_get_mark(0, ">")[1]
-
-  if srow > erow then
-    srow, erow = erow, srow
-  end
-
-  local linespec = (srow == erow) and ("#L" .. srow) or ("#L" .. srow .. "-L" .. erow)
-
-  local relpath = vim.fn.expand("%:~:.")
-
-  local clip = "@" .. relpath .. linespec
-  vim.fn.setreg("+", clip)
-  print("Copied: " .. clip)
+  return vim.fn.expand("%:~:.")
 end
 
 vim.keymap.set("n", "<leader>C", function()
+  local relpath = get_project_relative_path()
+  local clip = "@" .. relpath
+  vim.fn.setreg("+", clip)
+  print("Copied: " .. clip)
+end, { desc = "Copy relative path with line", noremap = true })
+
+vim.keymap.set("v", "<leader>C", function()
+  local relpath = get_project_relative_path()
+  local srow = vim.fn.line("v")
+  local erow = vim.fn.line(".")
+  if srow > erow then
+    srow, erow = erow, srow
+  end
+  local linespec = (srow == erow) and ("#L" .. srow) or ("#L" .. srow .. "-L" .. erow)
+  local clip = "@" .. relpath .. linespec
+  vim.fn.setreg("+", clip)
+  print("Copied: " .. clip)
+end, { desc = "Copy relative path with line range", noremap = true })
+
+vim.keymap.set("n", "<leader>Y", function()
   local abs = vim.fn.expand("%:p")
   vim.fn.setreg("+", abs)
   print("Copied: " .. abs)
 end, { desc = "Copy absolute file path", noremap = true })
 
-vim.keymap.set("v", "<leader>C", copy_with_lines, { desc = "Copy relative path with line range", noremap = true })
+vim.keymap.set("v", "<leader>Y", function()
+  local abs = vim.fn.expand("%:p")
+  local srow = vim.fn.line("v")
+  local erow = vim.fn.line(".")
+  if srow > erow then
+    srow, erow = erow, srow
+  end
+  local linespec = (srow == erow) and ("#L" .. srow) or ("#L" .. srow .. "-L" .. erow)
+  local clip = abs .. linespec
+  vim.fn.setreg("+", clip)
+  print("Copied: " .. clip)
+end, { desc = "Copy absolute path with line range", noremap = true })
 
 vim.g.lazyvim_prettier_needs_config = true
 -- vim.g.lazyvim_eslint_auto_format = true
