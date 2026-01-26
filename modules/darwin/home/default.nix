@@ -38,7 +38,6 @@ in {
 
   home.packages = with pkgs; [
     # Development
-    fnm # node version manager
     postgresql # PostgreSQL client (psql)
     poetry # Python package manager
 

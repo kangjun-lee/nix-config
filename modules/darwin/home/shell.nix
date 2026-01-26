@@ -77,8 +77,6 @@ in {
       # Fix Xcode path for Expo compatibility
       export DEVELOPER_DIR="/Applications/Xcode.app/Contents/Developer"
 
-      eval "$(fnm env --use-on-cd --version-file-strategy=recursive --corepack-enabled --resolve-engines --shell zsh)"
-
       # Poetry completions for zsh
       mkdir -p ~/.zfunc
       if [[ ! -f ~/.zfunc/_poetry ]]; then
@@ -143,8 +141,6 @@ in {
 
       # Fix Xcode path for Expo compatibility
       set -gx DEVELOPER_DIR "/Applications/Xcode.app/Contents/Developer"
-
-      fnm env --use-on-cd --version-file-strategy=recursive --corepack-enabled --resolve-engines --shell fish | source
 
       # Poetry completions for fish
       mkdir -p ~/.config/fish/completions

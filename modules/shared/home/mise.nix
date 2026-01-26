@@ -32,6 +32,6 @@
     ${pkgs.mise}/bin/mise use --global uv@latest
     ${pkgs.mise}/bin/mise use --global rust@stable
 
-    ${pkgs.mise}/bin/mise use --global pnpm@stable
+    ${pkgs.mise}/bin/mise use --global pnpm@latest
   '';
 }
