@@ -41,12 +41,15 @@ in {
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
   environment.systemPackages = [
+    pkgs.wget
+    pkgs.curl
   ];
 
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
     verbose = true;
+    backupFileExtension = "home";
     users.${username} = import ./home;
     extraSpecialArgs = {
       inherit inputs userConfig outputs;
@@ -61,6 +64,9 @@ in {
 
   # Necessary for using flakes on this system.
   nix.settings.experimental-features = "nix-command flakes";
+
+  # Use determinate system nix
+  nix.enable = false;
 
   imports = [
     inputs.nix-homebrew.darwinModules.nix-homebrew

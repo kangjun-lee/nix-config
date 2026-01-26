@@ -16,7 +16,7 @@ macos-option-as-alt = true
 mouse-hide-while-typing = true
 font-size = 16
 
-command = /etc/profiles/per-user/gangjun/bin/fish --login --interactive
+command = /etc/profiles/per-user/kangjun/bin/fish --login --interactive
 keybind = shift+enter=text:\n
 
 keybind="cmd+alt+up=csi:1;7A"

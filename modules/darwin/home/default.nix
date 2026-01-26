@@ -24,6 +24,7 @@ in {
     ../../shared/home/btop.nix
     ../../shared/home/git.nix
     ../../shared/home/spicetify.nix
+    ../../shared/home/mise.nix
     ../../shared/home/nvim.nix
     ../../shared/home/tmux.nix
     ../../shared/home/ghostty.nix
@@ -42,8 +43,6 @@ in {
     poetry # Python package manager
 
     # Cli Utils
-    wget
-    curl
     bat # cat 대체, 구문 강조
     fd # find 대체
     fzf # fuzzy finder
@@ -84,6 +83,14 @@ in {
     trippy
     bandwhich
     # netscanner  # aarch64-darwin not supported
+
+    # docker
+    colima
+    docker
+    docker-buildx
+    
+    # battery management
+    aldente
   ];
 
   programs.home-manager.enable = true;

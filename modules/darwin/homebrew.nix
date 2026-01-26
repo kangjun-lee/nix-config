@@ -53,8 +53,10 @@ in {
       "ghostty"
 
       # <zen-browser>
-      "zen-browser"
+      "zen"
       # </zen-browser>
+
+      "arc"
 
       "minecraft"
 
@@ -62,11 +64,15 @@ in {
 
       "figma"
 
-      "tailscale"
+      "tailscale-app"
 
       "bluetility"
 
       "discord"
+
+      "raycast"
+
+      "gureumkim"
     ];
   };
 }

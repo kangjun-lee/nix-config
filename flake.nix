@@ -57,5 +57,16 @@
           nixConfig = "/Users/gangjun/nix";
         };
       })
+	(mkDarwinConfig {
+        profile = "kj-default-v2";
+        system = "aarch64-darwin";
+        userConfig = mkUserConfig {
+          username = "kangjun";
+          name = "Kangjun Lee";
+          email = "me@gangjun.dev";
+          home = "/Users/kangjun";
+          nixConfig = "/Users/kangjun/nix";
+        };
+      })
     ];
 }

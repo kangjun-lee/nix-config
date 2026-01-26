@@ -108,7 +108,7 @@ in {
         source ~/.config/shell-secrets.fish
       fi
 
-      eval "$(~/.local/bin/mise activate zsh)"
+      eval "$(${pkgs.mise}/bin/mise activate zsh)"
     '';
   };
 
@@ -157,7 +157,7 @@ in {
         source ~/.config/shell-secrets.fish
       end
 
-      ~/.local/bin/mise activate fish | source
+      ${pkgs.mise}/bin/mise activate fish | source
     '';
 
     # Functions
