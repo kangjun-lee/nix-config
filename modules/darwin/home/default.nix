@@ -90,6 +90,10 @@ in {
     
     # battery management
     aldente
+
+    obsidian
+
+    wrangler
   ];
 
   programs.home-manager.enable = true;

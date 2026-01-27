@@ -73,6 +73,10 @@ in {
       "raycast"
 
       "gureumkim"
+
+      "android-studio"
+
+      "docker"
     ];
   };
 }
