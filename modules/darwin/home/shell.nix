@@ -57,6 +57,8 @@
     pnrd = "pnpm run dev";
 
     nvim = "nvim --listen /tmp/nvim-socket-$(tmux display -p '#{window_id}').pipe";
+
+    wm = "workmux";
   };
 in {
   programs.zsh = {
@@ -102,10 +104,6 @@ in {
         fi
       fi
 
-      if test -f ~/.config/shell-secrets.fish; then
-        source ~/.config/shell-secrets.fish
-      fi
-
       eval "$(${pkgs.mise}/bin/mise activate zsh)"
     '';
   };
@@ -138,6 +136,7 @@ in {
       set --export BUN_INSTALL "$HOME/.bun"
       set --export PATH $BUN_INSTALL/bin $PATH
 
+      set --export PATH /Users/gangjun/.opencode/bin $PATH
 
       # Fix Xcode path for Expo compatibility
       set -gx DEVELOPER_DIR "/Applications/Xcode.app/Contents/Developer"
@@ -212,6 +211,10 @@ in {
 
   home.file.".config/fish/completions/gtr.fish" = {
     source = "${pkgs.git-worktree-runner}/completions/gtr.fish";
+  };
+
+  home.sessionVariables = {
+    EDITOR = "nvim";
   };
 
   programs.carapace.enable = true;
