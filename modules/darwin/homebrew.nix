@@ -56,8 +56,6 @@ in {
       "zen"
       # </zen-browser>
 
-      "arc"
-
       "minecraft"
 
       "freecad"
@@ -71,8 +69,6 @@ in {
       "discord"
 
       "raycast"
-
-      "gureumkim"
 
       "android-studio"
 
