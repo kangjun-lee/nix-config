@@ -19,6 +19,10 @@
     '';
   };
 
+  home.file.".local/bin/claude-usage" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${userConfig.nixConfig}/modules/shared/files/bin/claude-usage";
+  };
+
   home.file.".config/tmux-custom-config" = {
     source = config.lib.file.mkOutOfStoreSymlink "${userConfig.nixConfig}/modules/shared/files/tmux";
     recursive = true;

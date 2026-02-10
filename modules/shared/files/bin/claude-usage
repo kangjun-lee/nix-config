@@ -1,0 +1,243 @@
+#!/usr/bin/env bash
+# claude-usage: Display Claude Code API usage in tmux status bar
+# Original: https://gist.github.com/simoninglis/b6f909ba0aa2f67af872866e2f22dbd4
+# Adapted for macOS (Darwin) with catppuccin/tmux integration
+#
+# Usage:
+#   claude-usage --plain    # plain text for catppuccin module (sets @claude_usage_color)
+#   claude-usage            # standalone tmux styled output
+#
+# Dependencies: curl, jq
+# Platform: macOS (Darwin)
+# License: MIT
+
+set -euo pipefail
+
+#=============================================================================
+# USER CONFIGURATION
+#=============================================================================
+
+CACHE_TTL="${CLAUDE_USAGE_CACHE_TTL:-300}"
+THRESHOLD_LOW="${CLAUDE_USAGE_THRESHOLD_LOW:-50}"
+THRESHOLD_MED="${CLAUDE_USAGE_THRESHOLD_MED:-80}"
+
+STYLE_LOW="${CLAUDE_USAGE_STYLE_LOW:-fg=white,bold}"
+STYLE_MED="${CLAUDE_USAGE_STYLE_MED:-fg=colour136}"
+STYLE_HIGH="${CLAUDE_USAGE_STYLE_HIGH:-fg=colour160}"
+STYLE_ERROR="${CLAUDE_USAGE_STYLE_ERROR:-fg=white,dim}"
+
+#=============================================================================
+# INTERNAL CONFIGURATION
+#=============================================================================
+
+readonly CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/claude-usage"
+readonly CACHE_FILE="${CACHE_DIR}/data.tsv"
+readonly CREDENTIALS_FILE="${CLAUDE_USAGE_CREDENTIALS:-$HOME/.claude/.credentials.json}"
+readonly KEYCHAIN_SERVICE="Claude Code-credentials"
+readonly API_URL="https://api.anthropic.com/api/oauth/usage"
+
+PLAIN_MODE=false
+[[ "${1:-}" == "--plain" ]] && PLAIN_MODE=true
+
+#=============================================================================
+# FUNCTIONS
+#=============================================================================
+
+check_dependencies() {
+    local missing=()
+    for cmd in curl jq; do
+        command -v "$cmd" &>/dev/null || missing+=("$cmd")
+    done
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        [[ "$PLAIN_MODE" == true ]] && echo " ERR" || echo "#[fg=red]ERR#[default]"
+        exit 1
+    fi
+}
+
+ensure_cache_dir() {
+    [[ -d "$CACHE_DIR" ]] || { mkdir -p "$CACHE_DIR" && chmod 700 "$CACHE_DIR"; }
+}
+
+format_time_until() {
+    local reset_at="$1"
+
+    if [[ -z "$reset_at" ]] || [[ "$reset_at" == "null" ]]; then
+        echo "?"
+        return
+    fi
+
+    local parsed_date
+    parsed_date=$(echo "$reset_at" | sed -E 's/T/ /; s/\.[0-9]+//; s/([+-][0-9]{2}):([0-9]{2})$/\1\2/')
+
+    local reset_epoch now_epoch diff_seconds
+    reset_epoch=$(date -jf "%Y-%m-%d %H:%M:%S %z" "$parsed_date" "+%s" 2>/dev/null) || { echo "?"; return; }
+    now_epoch=$(date +%s)
+    diff_seconds=$((reset_epoch - now_epoch))
+
+    if [[ "$diff_seconds" -le 0 ]]; then
+        echo "0m"
+        return
+    fi
+
+    local diff_minutes=$((diff_seconds / 60))
+    local diff_hours=$((diff_seconds / 3600))
+    local diff_days=$((diff_seconds / 86400))
+
+    if [[ "$diff_hours" -lt 1 ]]; then
+        echo "${diff_minutes}m"
+    elif [[ "$diff_hours" -lt 24 ]]; then
+        echo "${diff_hours}h"
+    else
+        echo "${diff_days}d"
+    fi
+}
+
+# Set catppuccin theme color based on max utilization
+update_tmux_color() {
+    local five_hour="$1" seven_day="$2"
+    local util_5h="${five_hour%.*}" util_7d="${seven_day%.*}"
+    util_5h="${util_5h:-0}"
+    util_7d="${util_7d:-0}"
+
+    local max_util="$util_5h"
+    [[ "$util_7d" -gt "$max_util" ]] && max_util="$util_7d"
+
+    local color
+    if [[ "$max_util" -lt "$THRESHOLD_LOW" ]]; then
+        color=$(tmux show -gqv @thm_green 2>/dev/null)
+    elif [[ "$max_util" -lt "$THRESHOLD_MED" ]]; then
+        color=$(tmux show -gqv @thm_yellow 2>/dev/null)
+    else
+        color=$(tmux show -gqv @thm_red 2>/dev/null)
+    fi
+
+    [[ -z "$color" ]] && color=$(tmux show -gqv @thm_mauve 2>/dev/null || echo "#cba6f7")
+    tmux set -gq @claude_usage_color "$color" 2>/dev/null || true
+}
+
+format_output() {
+    local five_hour="$1" seven_day="$2" five_hour_reset="$3" seven_day_reset="$4"
+
+    local display_5h="${five_hour%.*}" display_7d="${seven_day%.*}"
+    display_5h="${display_5h:-0}"
+    display_7d="${display_7d:-0}"
+
+    local time_5h time_7d
+    time_5h=$(format_time_until "$five_hour_reset")
+    time_7d=$(format_time_until "$seven_day_reset")
+
+    if [[ "$PLAIN_MODE" == true ]]; then
+        update_tmux_color "$five_hour" "$seven_day"
+        echo " 5h:${display_5h}(${time_5h}) 7d:${display_7d}(${time_7d})"
+    else
+        local style_5h="$STYLE_LOW" style_7d="$STYLE_LOW"
+        [[ "${display_5h:-0}" -ge "$THRESHOLD_LOW" ]] && style_5h="$STYLE_MED"
+        [[ "${display_5h:-0}" -ge "$THRESHOLD_MED" ]] && style_5h="$STYLE_HIGH"
+        [[ "${display_7d:-0}" -ge "$THRESHOLD_LOW" ]] && style_7d="$STYLE_MED"
+        [[ "${display_7d:-0}" -ge "$THRESHOLD_MED" ]] && style_7d="$STYLE_HIGH"
+        echo "#[${style_5h}]5h:${display_5h}(${time_5h})#[default] #[${style_7d}]7d:${display_7d}(${time_7d})#[default]"
+    fi
+}
+
+fallback_output() {
+    if [[ "$PLAIN_MODE" == true ]]; then
+        tmux set -gq @claude_usage_color "$(tmux show -gqv @thm_overlay_1 2>/dev/null || echo '#6c7086')" 2>/dev/null || true
+        echo " 5h:--(?) 7d:--(?)"
+    else
+        echo "#[${STYLE_ERROR}]5h:--(?)#[default] #[${STYLE_ERROR}]7d:--(?)#[default]"
+    fi
+}
+
+cache_valid() {
+    [[ -f "$CACHE_FILE" ]] || return 1
+    local cache_age=$(( $(date +%s) - $(stat -f %m "$CACHE_FILE" 2>/dev/null || echo 0) ))
+    [[ "$cache_age" -lt "$CACHE_TTL" ]]
+}
+
+get_access_token() {
+    # Try 1: credentials.json file (older Claude Code versions)
+    if [[ -f "$CREDENTIALS_FILE" ]]; then
+        local token
+        token=$(jq -r '.claudeAiOauth.accessToken // empty' "$CREDENTIALS_FILE" 2>/dev/null)
+        if [[ -n "$token" ]]; then
+            echo "$token"
+            return 0
+        fi
+    fi
+
+    # Try 2: macOS Keychain (Claude Code v2.1+)
+    local keychain_data
+    keychain_data=$(security find-generic-password -s "$KEYCHAIN_SERVICE" -w 2>/dev/null)
+    if [[ -n "$keychain_data" ]]; then
+        local token
+        token=$(echo "$keychain_data" | jq -r '.claudeAiOauth.accessToken // empty' 2>/dev/null)
+        if [[ -n "$token" ]]; then
+            echo "$token"
+            return 0
+        fi
+    fi
+
+    return 1
+}
+
+fetch_usage() {
+    local token
+    token=$(get_access_token) || return 1
+    [[ -n "$token" ]] || return 1
+
+    local response
+    response=$(curl -s --max-time 5 "$API_URL" \
+        --config <(printf 'header = "Authorization: Bearer %s"\n' "$token") \
+        -H "anthropic-beta: oauth-2025-04-20" \
+        -H "Content-Type: application/json" 2>/dev/null)
+    [[ -n "$response" ]] || return 1
+
+    local parsed
+    parsed=$(echo "$response" | jq -r '[
+        .five_hour.utilization // 0,
+        .seven_day.utilization // 0,
+        .five_hour.resets_at // "",
+        .seven_day.resets_at // ""
+    ] | @tsv' 2>/dev/null) || return 1
+
+    local five_hour seven_day five_hour_reset seven_day_reset
+    IFS=$'\t' read -r five_hour seven_day five_hour_reset seven_day_reset <<< "$parsed"
+    [[ -n "$five_hour" && -n "$seven_day" ]] || return 1
+
+    # Cache raw data as TSV
+    ensure_cache_dir
+    local tmp_file
+    tmp_file=$(mktemp "${CACHE_DIR}/data.XXXXXX")
+    printf '%s\t%s\t%s\t%s\n' "$five_hour" "$seven_day" "$five_hour_reset" "$seven_day_reset" > "$tmp_file"
+    mv -f "$tmp_file" "$CACHE_FILE"
+    chmod 600 "$CACHE_FILE"
+
+    format_output "$five_hour" "$seven_day" "$five_hour_reset" "$seven_day_reset"
+}
+
+read_cache() {
+    local five_hour seven_day five_hour_reset seven_day_reset
+    IFS=$'\t' read -r five_hour seven_day five_hour_reset seven_day_reset < "$CACHE_FILE"
+    format_output "$five_hour" "$seven_day" "$five_hour_reset" "$seven_day_reset"
+}
+
+main() {
+    check_dependencies
+
+    if cache_valid; then
+        read_cache
+        return 0
+    fi
+
+    if ! fetch_usage; then
+        if [[ -f "$CACHE_FILE" ]]; then
+            local output
+            output=$(read_cache)
+            echo "${output}~"
+        else
+            fallback_output
+        fi
+    fi
+}
+
+main "$@"
