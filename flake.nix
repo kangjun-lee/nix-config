@@ -57,7 +57,7 @@
           nixConfig = "/Users/gangjun/nix";
         };
       })
-	(mkDarwinConfig {
+      (mkDarwinConfig {
         profile = "kj-default-v2";
         system = "aarch64-darwin";
         userConfig = mkUserConfig {
