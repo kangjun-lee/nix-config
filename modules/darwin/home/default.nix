@@ -94,6 +94,9 @@ in {
     obsidian
 
     wrangler
+
+    # workmux - tmux workspace manager
+    workmux
   ];
 
   programs.home-manager.enable = true;

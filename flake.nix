@@ -24,6 +24,8 @@
     catppuccin.url = "github:catppuccin/nix";
 
     yazi.url = "github:sxyazi/yazi";
+
+    workmux.url = "github:raine/workmux";
   };
 
   outputs = {
