@@ -1,4 +1,4 @@
-{pkgs, ...}: let
+{pkgs, config, ...}: let
   shellAliases = {
     # Modern replacements
     ls = "eza --icons";
@@ -63,6 +63,7 @@
 in {
   programs.zsh = {
     enable = true;
+    dotDir = "${config.xdg.configHome}/zsh";
     shellAliases = shellAliases;
 
     initContent = ''
@@ -78,13 +79,6 @@ in {
 
       # Fix Xcode path for Expo compatibility
       export DEVELOPER_DIR="/Applications/Xcode.app/Contents/Developer"
-
-      # Poetry completions for zsh
-      mkdir -p ~/.zfunc
-      if [[ ! -f ~/.zfunc/_poetry ]]; then
-        poetry completions zsh > ~/.zfunc/_poetry
-      fi
-      fpath+=~/.zfunc
 
       $GHOSTTY_RESOURCES_DIR/shell-integration/zsh/ghostty-integration
     '';
@@ -140,12 +134,6 @@ in {
 
       # Fix Xcode path for Expo compatibility
       set -gx DEVELOPER_DIR "/Applications/Xcode.app/Contents/Developer"
-
-      # Poetry completions for fish
-      mkdir -p ~/.config/fish/completions
-      if not test -f ~/.config/fish/completions/poetry.fish
-        poetry completions fish > ~/.config/fish/completions/poetry.fish
-      end
 
       # apply local serets
       if test -f ~/.config/shell-secrets.fish

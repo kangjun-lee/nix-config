@@ -39,7 +39,7 @@ in {
   home.packages = with pkgs; [
     # Development
     postgresql # PostgreSQL client (psql)
-    poetry # Python package manager
+    # poetry - installed via mise/pipx (nixpkgs rapidfuzz build broken on aarch64-darwin)
 
     # Cli Utils
     bat # cat 대체, 구문 강조

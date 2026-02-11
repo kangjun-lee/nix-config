@@ -4,7 +4,7 @@
     enable = true;
     enableZshIntegration = true;
 
-    settings = {
+    globalConfig.settings = {
       experimental = true;
       verbose = false;
       auto_install = true;
