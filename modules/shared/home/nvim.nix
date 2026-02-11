@@ -10,6 +10,7 @@ in{
     mermaid-cli
     websocat
     grpcurl
+    nixd
 
     (pkgs.writeShellScriptBin "lua5.1" ''exec ${lua51}/bin/lua "$@"'')
     (pkgs.writeShellScriptBin "luarocks5.1" ''exec ${luarocks51}/bin/luarocks "$@"'')
