@@ -10,7 +10,8 @@
     recursive = true;
   };
   home.file.".hammerspoon/init.lua".text = ''
-    require("hs.ipc")
+    -- NOTE: hs.ipc removed due to crash issues (CFMessagePort/PAC validation failures)
+    -- Using hs.urlevent instead for external communication
 
     stackline = require "stackline"
     stackline:init({
@@ -268,6 +269,17 @@
         hs.timer.doAfter(duration, opencode_dismiss)
       end
     end
+
+    -- URL event handler for external communication (replaces hs.ipc)
+    hs.urlevent.bind("opencode", function(eventName, params)
+      local session = params.session or ""
+      local window = params.window or ""
+      local event = params.event or "complete"
+      local paneTitle = params.paneTitle or ""
+      local message = params.message or ""
+      local duration = tonumber(params.duration) or 5
+      opencode_notify(session, window, event, paneTitle, message, duration)
+    end)
 
     -- Screen blackout toggle
     local blackoutCanvases = {}
