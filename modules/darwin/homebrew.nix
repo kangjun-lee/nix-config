@@ -71,8 +71,6 @@ in {
       "raycast"
 
       "android-studio"
-
-      "docker"
     ];
   };
 }
