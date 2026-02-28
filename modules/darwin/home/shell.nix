@@ -126,6 +126,8 @@ in {
       set -gx PATH $HOME/.claude/local $PATH
       set -gx PATH $HOME/.cargo/bin $PATH
       set -gx XDG_CONFIG_HOME "$HOME/.config"
+      set -gx DOCKER_API_VERSION 1.43
+      set -gx EDITOR nvim
 
       set --export BUN_INSTALL "$HOME/.bun"
       set --export PATH $BUN_INSTALL/bin $PATH
@@ -244,7 +246,6 @@ in {
   };
 
   home.sessionVariables = {
-    EDITOR = "nvim";
   };
 
   programs.carapace.enable = true;
