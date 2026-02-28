@@ -21,6 +21,7 @@
         uv = "latest";
         rust = "stable";
         pnpm = "latest";
+        ruby = "3.2";
       };
     };
   };
