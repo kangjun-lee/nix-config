@@ -97,6 +97,8 @@ in {
 
     # workmux - tmux workspace manager
     workmux
+
+    jira-cli-go
   ];
 
   # OpenCode workmux status plugin
